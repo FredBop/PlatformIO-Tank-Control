@@ -31,7 +31,7 @@
 #define LOW_DETECT_SENSORPIN 12
 
 #define MAX_CONSECUTIVE_WATER_ON_INTERVALS  60
-
+const int PressureSensorPin = A0;
 
 enum fillState {FILLING_ON, FILLING_OFF, FAILED_SHUTDOWN};
 
@@ -44,10 +44,13 @@ fillState currentState = FILLING_OFF;
     
 int GetWaterDepthFromSensor()
 {
-    // Get the depth of the water from the pressure sensor
-  return (0);
+  int sensorValue;
+  // Get the depth of the water from the pressure sensor
+  sensorValue = analogRead(PressureSensorPin);
+  Serial.print("Pressure Sensor Value = ");
+  Serial.println(sensorValue);
+  return sensorValue;
 }
-
 
 
 void WaterOn()
@@ -80,12 +83,7 @@ void setup()
 
   // initialize the LED pin as an output:
   pinMode(LEDPIN, OUTPUT);      
-  // initialize the sensor pins as an input:
-  pinMode(LOW_DETECT_SENSORPIN, INPUT);     
-  digitalWrite(LOW_DETECT_SENSORPIN, HIGH); // turn on the pullup
-  pinMode(HIGH_DETECT_SENSORPIN, INPUT);     
-  digitalWrite(HIGH_DETECT_SENSORPIN, HIGH); // turn on the pullup
-
+  
   //  Setup 4 output pins for the Relay board
   pinMode(TANKVALVE_1, OUTPUT);
   pinMode(TANKVALVE_2, OUTPUT);
