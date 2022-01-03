@@ -133,7 +133,7 @@ void loop()
     if (waterDepth >= WATER_DEPTH_FULL)
     {  // If (water depth is full)
        // Set the state to FILLING_OFF
-       currentState = FILLING_OFF
+       currentState = FILLING_OFF;
 //            Turn off the water
 //        elseif (Filling Checkpoint Interval has expired)
 //            If (the water level is not rising)
