@@ -143,8 +143,9 @@ void loop()
     }
     else if (++waterOnCheckPointCounter > WATER_ON_CHECKPOINT_INTERVALS)
     { //  elseif (Filling Checkpoint Interval has expired)
-      if ( 1 /* condition */)
+      if ( 1 /* Sophia FILL THIS IN */)
       { // If (the water level is not rising)
+        //    Sophia, FINISH UP THIS CODE BLOCK
         //    Set the state to FAILED_SHUTDOWN
         //    Turn off the water
       }
