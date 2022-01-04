@@ -30,7 +30,7 @@
 #define HIGH_DETECT_SENSORPIN 8
 #define LOW_DETECT_SENSORPIN 12
 
-#define MAX_CONSECUTIVE_WATER_ON_INTERVALS  60
+#define WATER_ON_CHECKPOINT_INTERVALS  5    // the number of times to go around the loop before checking to see if the water level is rising
 const int PressureSensorPin = A0;
 
 enum fillState {FILLING_ON, FILLING_OFF, FAILED_SHUTDOWN};
@@ -113,6 +113,8 @@ void setup()
 
 void loop() 
 {
+  unsigned int  waterOnCheckPointCounter;
+
   //  Read the depth of the water from the sensor
   //  waterDepth = GetWaterDepth(waterDepth);
   waterDepth = GetWaterDepthFromSensor();
@@ -127,8 +129,10 @@ void loop()
       currentState = FILLING_ON;
       // Turn on the water
       WaterOn();
+      waterOnCheckPointCounter = 0;   // We'll use this counter to determine when to verify that the water level is rising
     }
     break;
+
     case FILLING_ON :
     if (waterDepth >= WATER_DEPTH_FULL)
     {  // If (water depth is full)
@@ -137,13 +141,19 @@ void loop()
       // Turn off the water
       WaterOff();
     }
-//        elseif (Filling Checkpoint Interval has expired)
-//            If (the water level is not rising)
-//                Set the state to FAILED_SHUTDOWN
-//                Turn off the water
-//            Else
-//                Start a new Checkpoint Interval
-      break;
+    else if (++waterOnCheckPointCounter > WATER_ON_CHECKPOINT_INTERVALS)
+    { //  elseif (Filling Checkpoint Interval has expired)
+      if ( 1 /* condition */)
+      { // If (the water level is not rising)
+        //    Set the state to FAILED_SHUTDOWN
+        //    Turn off the water
+      }
+      else
+      {
+        // Start a new Checkpoint Interval
+        waterOnCheckPointCounter = 0;
+      }
+    } break;
 
      case FAILED_SHUTDOWN :
 //        Do nothing, only a power cycle can reset a FAILED_SHUTDOWN
