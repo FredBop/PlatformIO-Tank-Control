@@ -19,6 +19,8 @@
 #define  TANKVALVE_2              6    // Relay 2 is controlled by digital pin 6
 #define  SPRINKLERVALVE_1         5    // Relay 3 is controlled by digital pin 5
 #define  SPRINKLERVALVE_2         4    // Relay 4 is controlled by digital pin 4
+// Sophia added a comment
+
 
 // IR sensor definitions
 #define LEDPIN 13
