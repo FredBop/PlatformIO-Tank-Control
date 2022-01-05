@@ -33,13 +33,13 @@
 #define HIGH_DETECT_SENSORPIN 8
 #define LOW_DETECT_SENSORPIN 12
 
-#define WATER_ON_CHECKPOINT_INTERVALS  5    // the number of times to go around the loop before checking to see if the water level is rising
+#define WATER_ON_CHECKPOINT_INTERVALS  50    // 5 minutes, the number of times to go around the loop before checking to see if the water level is rising
 const int PressureSensorPin = A0;
 
 enum fillState {FILLING_ON, FILLING_OFF, FAILED_SHUTDOWN};
 
 #define WATER_DEPTH_LOW     1000        // the value returned by the sensor when the water value is low
-#define WATER_DEPTH_FULL    5000        // the vakue returned by the sensor when the tank is full
+#define WATER_DEPTH_FULL    5000        // the value returned by the sensor when the tank is full
 
 int   waterOnCounter = 0;
 int waterDepth;
@@ -117,6 +117,7 @@ void setup()
 void loop() 
 {
   unsigned int  waterOnCheckPointCounter;
+  int waterDepthIntervalStart;
 
   //  Read the depth of the water from the sensor
   //  waterDepth = GetWaterDepth(waterDepth);
@@ -133,6 +134,7 @@ void loop()
       // Turn on the water
       WaterOn();
       waterOnCheckPointCounter = 0;   // We'll use this counter to determine when to verify that the water level is rising
+      waterDepthIntervalStart = waterDepth;
     }
     break;
 
@@ -146,16 +148,16 @@ void loop()
     }
     else if (++waterOnCheckPointCounter > WATER_ON_CHECKPOINT_INTERVALS)
     { //  elseif (Filling Checkpoint Interval has expired)
-      if ( 1 /* Sophia FILL THIS IN */)
-      { // If (the water level is not rising)
-        //    Sophia, FINISH UP THIS CODE BLOCK
-        //    Set the state to FAILED_SHUTDOWN
-        //    Turn off the water
+      if ( waterDepth <= waterDepthIntervalStart )
+      { // the water depth did not rise during this checkpoint interval
+        currentState = FAILED_SHUTDOWN;
+        WaterOff();
       }
       else
-      {
+      { // the water level is still rising, so good, start a new interval for checking the water level
         // Start a new Checkpoint Interval
         waterOnCheckPointCounter = 0;
+        waterDepthIntervalStart = waterDepth;
       }
     } break;
 
@@ -163,7 +165,7 @@ void loop()
 //        Do nothing, only a power cycle can reset a FAILED_SHUTDOWN
       break;
   }  // end switch
-  delay(6000);  // This sets the delay time for each loop 
+  delay(6000);  // 6 seconds, this sets the delay time for each loop 
 }  // end loop
 
 /*
