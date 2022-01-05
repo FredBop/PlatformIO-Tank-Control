@@ -20,6 +20,7 @@
 #define  SPRINKLERVALVE_1         5    // Relay 3 is controlled by digital pin 5
 #define  SPRINKLERVALVE_2         4    // Relay 4 is controlled by digital pin 4
 // Sophia added a comment
+// Another comment from Sophia
 
 
 // IR sensor definitions
