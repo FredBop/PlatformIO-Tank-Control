@@ -38,8 +38,8 @@ const int PressureSensorPin = A0;
 
 enum fillState {FILLING_ON, FILLING_OFF, FAILED_SHUTDOWN};
 
-#define WATER_DEPTH_LOW     1000        // the value returned by the sensor when the water value is low
-#define WATER_DEPTH_FULL    5000        // the value returned by the sensor when the tank is full
+#define WATER_DEPTH_LOW     290        // the value returned by the sensor when the water value is low
+#define WATER_DEPTH_FULL    325        // the value returned by the sensor when the tank is full
 
 int   waterOnCounter = 0;
 int waterDepth;
@@ -58,6 +58,7 @@ int GetWaterDepthFromSensor()
 
 void WaterOn()
 {  //  Activate all four relays
+  Serial.println("Water On");
    digitalWrite(TANKVALVE_1, HIGH);  // setting OE to low ensures that the shift register outputs are enabled
    digitalWrite(TANKVALVE_2, HIGH);  // setting OE to low ensures that the shift register outputs are enabled
    delay(5000);
@@ -68,13 +69,15 @@ void WaterOn()
 
 void WaterOff() 
 {  //  Deactivate all four relays
-  for (int count = 0; count < 15; ++count)
+  /* for (int count = 0; count < 15; ++count)
   {
     delay(60000);    // fill the tank for 15 more minutes before turning of the valves
-  }
+  } 
+  */
+  Serial.println("Water Off");
    digitalWrite(SPRINKLERVALVE_1, LOW);  // setting OE to low ensures that the shift register outputs are enabled
    digitalWrite(SPRINKLERVALVE_2, LOW);  // setting OE to low ensures that the shift register outputs are enabled
-   delay(60000);    // let the water line drain into the tank
+   delay(60000);    // let the water line drain into the tank for 1 minute
    digitalWrite(TANKVALVE_1, LOW);  // setting OE to low ensures that the shift register outputs are enabled
    digitalWrite(TANKVALVE_2, LOW);  // setting OE to low ensures that the shift register outputs are enabled
  
@@ -113,11 +116,11 @@ void setup()
 //    Case: FAILED_SHUTDOWN
 //        Do nothing, only a power cycle can reset a FAILED_SHUTDOWN
 //         
+unsigned int  waterOnCheckPointCounter;
+int waterDepthIntervalStart;
 
 void loop() 
 {
-  unsigned int  waterOnCheckPointCounter;
-  int waterDepthIntervalStart;
 
   //  Read the depth of the water from the sensor
   //  waterDepth = GetWaterDepth(waterDepth);
@@ -148,6 +151,8 @@ void loop()
     }
     else if (++waterOnCheckPointCounter > WATER_ON_CHECKPOINT_INTERVALS)
     { //  elseif (Filling Checkpoint Interval has expired)
+      Serial.print("CheckPoint Value = ");
+      Serial.println(waterOnCheckPointCounter);
       if ( waterDepth <= waterDepthIntervalStart )
       { // the water depth did not rise during this checkpoint interval
         currentState = FAILED_SHUTDOWN;
@@ -163,6 +168,7 @@ void loop()
 
      case FAILED_SHUTDOWN :
 //        Do nothing, only a power cycle can reset a FAILED_SHUTDOWN
+      Serial.println("FAILED SHUTDOWN");
       break;
   }  // end switch
   delay(6000);  // 6 seconds, this sets the delay time for each loop 
